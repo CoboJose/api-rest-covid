@@ -1,0 +1,76 @@
+swagger: '2.0'
+info:
+  version: 1.0.0
+  title: Covid API
+  description: Spring boot API that maintains covid data in MongoDB
+  contact:
+    name: Cobo
+    url: 'https://github.com/CoboJose'
+basePath: /v1
+host: 'localhost:8080'
+schemes:
+  - https
+  - http
+consumes:
+  - application/json
+produces:
+  - application/json
+  
+
+paths:
+  /models:
+    x-swagger-router-controller: models
+    get:
+      tags:
+        - models
+      description: Get all models
+      operationId: getModels
+      responses:
+        '200':
+          description: models found
+          schema:
+            $ref: '#/definitions/ModelResponse'
+            
+    post:
+      tags:
+        - models
+      description: Create a model
+      operationId: createModel
+      parameters:
+        - name: model
+          in: body
+          description: New model object
+          required: true
+          schema:
+            $ref: '#/definitions/Model'
+      responses:
+        '201':
+          description: model created
+          schema:
+            $ref: '#/definitions/Model'
+  
+  
+definitions:
+  Model:
+    type: object
+    required:
+      - name
+      - description
+      - date
+    properties:
+      name:
+        type: string
+      description:
+        type: string
+      date:
+        type: number
+        
+  ModelResponse:
+    type: object
+    required:
+      - models
+    properties:
+      models:
+        type: array
+        items:
+          $ref: '#/definitions/Model'
