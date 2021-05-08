@@ -1,4 +1,4 @@
-package cbd2.server;
+package cbd52.server;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
