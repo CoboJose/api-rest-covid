@@ -1,5 +1,8 @@
 # React App
 
+## Dependencies
+- Node: https://nodejs.org/en/
+
 ## Development
 
 ### `npm install`

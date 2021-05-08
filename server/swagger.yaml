@@ -4,8 +4,8 @@ info:
   title: Covid API
   description: Spring boot API that maintains covid data in MongoDB
   contact:
-    name: Cobo
-    url: 'https://github.com/CoboJose'
+    name: Jose Cobo && Jose Gonzalez
+    url: 'https://github.com/CoboJose/api-rest-covid'
 basePath: /v1
 host: 'localhost:8080'
 schemes:
