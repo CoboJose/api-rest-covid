@@ -2,6 +2,10 @@
 
 ## Development
 
+### `npm install`
+
+Install all the dependencies.
+
 ### `npm start`
 
 Runs the app in the development mode.\
@@ -23,9 +27,9 @@ Your app is ready to be deployed!
 
 ### `npm install -g serve`
 
-Install the dependencies to serve the application
+Install the dependencies to serve the application.
 
 ### `serve -s build`
 
-Serves the application.
+Serves the application.\
 Open [http://localhost:5000](http://localhost:5000) to view it in the browser.
