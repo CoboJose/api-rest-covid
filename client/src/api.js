@@ -1,5 +1,5 @@
 import axios from 'axios'
 
 export default axios.create({
-  baseURL: `http://localhost:8080/v1/`
+  baseURL: `https://api-rest-covid.herokuapp.com/v1/`
 })

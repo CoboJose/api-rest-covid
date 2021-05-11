@@ -13,7 +13,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
           
-      - name: Production Deploy
+      - name: Deploy
         if: github.ref == 'refs/heads/main'
         uses: akhileshns/heroku-deploy@v3.12.12
         with:
@@ -32,5 +32,19 @@ jobs:
       steps:
         - name: Checkout repository
           uses: actions/checkout@v2
+
+        - name: Install Packages and Build
+          run: |
+            npm install
+            npm run-script build
+
+        - name: Deploy
+          if: github.ref == 'refs/heads/main'
+          uses: netlify/actions/cli@master
+          env:
+            CBD_AUTH_TOKEN: mGwsFeMcm7B37tdT1bMEGF0ZE-4cbllXuRkBUUk6m2k
+            NETLIFY_SITE_ID: c1043f0a-044d-4f66-88dd-18741dc5c44f
+          with:
+            args: deploy --dir=client/build --prod
 
         
