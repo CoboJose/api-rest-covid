@@ -1,10 +1,9 @@
 # Spring Boot Application
 
 ## Dependencies
-- Java: https://adoptopenjdk.net/?variant=openjdk11&jvmVariant=hotspot
+- Java: https://adoptopenjdk.net/?variant=openjdk11&jvmVariant=hotspot (Select OpenJDK 16 (Latest))
 - Maven: https://maven.apache.org/download.cgi
 - Lombok: https://projectlombok.org/ (Select your IDE)
-- MongoDB: https://www.mongodb.com/try/download/community
 
 ## Development
 
