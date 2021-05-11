@@ -50,7 +50,7 @@ jobs:
           if: github.ref == 'refs/heads/main'
           uses: netlify/actions/cli@master
           env:
-            CBD_AUTH_TOKEN: ${{secrets.NETLIFY_AUTH_TOKEN}}
+            NETLIFY_AUTH_TOKEN: ${{secrets.NETLIFY_AUTH_TOKEN}}
             NETLIFY_SITE_ID: c1043f0a-044d-4f66-88dd-18741dc5c44f
           with:
             args: deploy --dir=client/build --prod
