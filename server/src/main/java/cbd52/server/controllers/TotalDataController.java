@@ -35,7 +35,8 @@ public class TotalDataController {
     	if(totalDataOptional.isPresent()) {
     		res =  totalDataOptional.get();
     	}else {
-    		res = updateDatabaseService.updateTotalDataDB(date);
+    		updateDatabaseService.updateTotalDataDB(date);
+    		res = totalDataRepository.findById(date).get();
     	}
     	
         return res;

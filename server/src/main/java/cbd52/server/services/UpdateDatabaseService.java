@@ -7,12 +7,14 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.config.CookieSpecs;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.impl.client.HttpClients;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.mashape.unirest.http.Unirest;
 
+import cbd52.server.models.Autonomy;
 import cbd52.server.models.DateData;
 import cbd52.server.models.TotalData;
 import cbd52.server.repositories.DateDataRepository;
@@ -31,36 +33,39 @@ public class UpdateDatabaseService {
         Unirest.setHttpClient(httpClient);
 	}
 	
-	public DateData updateDateDataDB(String date) {
-        DateData res = new DateData();
+	public void updateDateDataDB(String date) {
 		try {
         	String url = "https://api.covid19tracking.narrativa.com/api/" + date + "/country/spain";
             JSONObject response = Unirest.get(url).asJson().getBody().getObject();
             
-            res.setDateString(date);
-            res.setDate(Date.valueOf(LocalDate.parse(date)));
-            res.setUpdatedAt(response.getString("updated_at"));
-            res.setTodayConfirmed(response.getJSONObject("dates").getJSONObject(date).getJSONObject("countries").getJSONObject("Spain").getInt("today_confirmed"));
+            DateData dData = new DateData(date);
+            dData.setUpdatedAt(response.getString("updated_at"));
             
-            res = this.dateDataRepository.save(res);
-           
-            /*while (keys.hasNext()) {
-        	   String key = keys.next().toString();
-				JSONObject stock = stocks.getJSONObject(key);
-				System.out.println(stock);
-				saveToDatabase(stock);
-			}*/
+            //Country
+            JSONObject spain = response.getJSONObject("dates").getJSONObject(date).getJSONObject("countries").getJSONObject("Spain");
+            dData.setTodayConfirmed(spain.getInt("today_confirmed"));
+            //Autonomies
+            JSONArray autonomies = spain.getJSONArray("regions");
+            for(int i = 0; i < autonomies.length(); i++) {
+            	JSONObject autonomyJson = autonomies.getJSONObject(i);
+            	Autonomy autonomy = new Autonomy();
+            	
+            	autonomy.setName(autonomyJson.getString("name"));
+            	autonomy.setTodayTotalConfirmed(500);
+            	
+            	dData.addAutonomy(autonomy);
+            }
+            
+            dData = this.dateDataRepository.save(dData);
         	
         } catch (Exception e) {
             e.printStackTrace();
         }
-		return res;
     }
 	
-	public TotalData updateTotalDataDB(String date) {
-        TotalData res = new TotalData();
+	public void updateTotalDataDB(String date) {
 		try {
-            
+			TotalData res = new TotalData();
             res.setDateString(date);
             res.setDate(Date.valueOf(LocalDate.parse(date)));
             
@@ -69,6 +74,5 @@ public class UpdateDatabaseService {
         } catch (Exception e) {
             e.printStackTrace();
         }
-		return res;
     }
 }
