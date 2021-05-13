@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import cbd52.server.models.Model;
 import cbd52.server.models.ModelsResponse;
 import cbd52.server.repositories.ModelRepository;
+import cbd52.server.services.UpdateDatabaseService;
 
 @RestController
 @RequestMapping("/v1")
@@ -19,9 +20,13 @@ public class TestController {
     @Autowired
     ModelRepository modelRepository;
 
+    @Autowired
+    UpdateDatabaseService updateDatabaseService;
+
     @RequestMapping(value="/models", method=RequestMethod.GET, produces="application/json")
     @ResponseStatus(HttpStatus.OK)
     public ModelsResponse getModels() {
+        updateDatabaseService.updateStockQuotes();
         return new ModelsResponse(modelRepository.findAll());
     }
 
