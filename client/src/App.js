@@ -1,10 +1,16 @@
 import { useState } from 'react'
 import './App.css'
 import axios from './api'
+import { SVGMap } from "react-svg-map"
+import spain3 from "./map"
+import {getLocationName} from "./utils"
+import "react-svg-map/lib/index.css";
 
 function App() {
 
   const [models, setModels] = useState(null)
+  const [pointedLocation, setPointedLocation] = useState(null)
+  const [selectedLocation, setSelectedLocation] = useState(null)
 
   const getModels = () => {
     axios.get("/models")
@@ -15,6 +21,20 @@ function App() {
       console.log(err.response.data)
     })
   }
+  
+  const handleLocationMouseOver = (event) => {
+		const pointedLocation = getLocationName(event);
+		 setPointedLocation(pointedLocation);
+	}
+
+  const handleOnChange = (selectedNode) => {
+		setSelectedLocation(prevState => {
+			return {
+				...prevState,
+				selectedLocation: selectedNode.attributes.name.value
+			};
+		});
+	}
 
   const postModel = () => {
     let data = {
@@ -34,6 +54,7 @@ function App() {
   return (
     <div className="App">
       <br/>
+      <SVGMap map={spain3} role="radiogroup" onLocationMouseOver={handleLocationMouseOver} onChange={handleOnChange}/> 
       <button onClick={() => getModels()}>Get models</button>
       <br/>
 
