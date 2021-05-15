@@ -26,8 +26,8 @@ public class TotalDataController {
     //TODO
     @RequestMapping(value="/totalData", method=RequestMethod.GET, produces="application/json")
     @ResponseStatus(HttpStatus.OK)
-    public TotalData TotalData() {
-    	TotalData res = null;
+    public String TotalData() {
+    	/*TotalData res = null;
     	String date = LocalDate.now().toString();
     	System.out.println(date);
     	// Check if the data for that day already exists in the database, if not create it.
@@ -37,8 +37,9 @@ public class TotalDataController {
     	}else {
     		updateDatabaseService.updateTotalDataDB(date);
     		res = totalDataRepository.findById(date).get();
-    	}
+    	}*/
+    	//updateDatabaseService.populateDB();
     	
-        return res;
+        return "ole";
     }
 }
