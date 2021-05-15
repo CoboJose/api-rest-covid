@@ -1,7 +1,74 @@
-.App {
-  text-align: center;
+* {
+  margin: 0;
 }
 
-button:hover{
-  cursor: pointer;
+body{
+  background-color: #f5f6fa;
+}
+
+.app{
+  display: flex;
+  justify-content: space-evenly;
+  padding: 20px;
+}
+
+.app-header{
+  display:flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding: 20px;
+}
+
+.app-left{
+  flex: 0.9;
+}
+
+.global-stats{
+  display: flex;
+  justify-content: space-between;
+  padding-bottom: 20px;
+}
+.selected-stats{
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+  flex:1
+}
+
+.input-container{
+  padding:15px;
+  align-items: center;
+}
+
+.input-container h3{
+  font-size: 14px;
+  margin-bottom: 2px;
+}
+
+.date-input{
+  border: none;
+  border-radius: 20px;
+  padding:20px;
+  outline: none;
+}
+
+
+@media (max-width: 990px){
+  .app{
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 690px){
+  .global-stats{
+      flex-direction: column;
+      
+  }
+
+  .selected-stats{
+    flex-direction: column;
+    margin-bottom: 20px;
+
+  }
 }
