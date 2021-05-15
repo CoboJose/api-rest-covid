@@ -8,7 +8,6 @@ import SpainTable from './components/SpainTable'
 import { Card, CardContent, IconButton } from '@material-ui/core'
 import AutonomyStats from './components/AutonomyStats'
 import ProvinceStats from './components/ProvinceStats'
-import DateRangeIcon from '@material-ui/icons/DateRange';
 
 function App() {
 
