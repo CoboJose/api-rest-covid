@@ -27,11 +27,9 @@ public class DateDataController {
     @RequestMapping(value="/dateData", method=RequestMethod.GET, produces="application/json")
     @ResponseStatus(HttpStatus.OK)
     public DateData DateData(@RequestParam String date) {
-    	// Check if the data for that day already exists in the database, if not create it.
     	Optional<DateData> res = dateDataRepository.findById(date);
-    	if(true){//res.isEmpty()) {
-    		//updateDatabaseService.updateDateDataDB(date);
-    		res = dateDataRepository.findById(date);
+    	if(res.isEmpty()){
+    		return null;
     	}
         return res.get();
     }

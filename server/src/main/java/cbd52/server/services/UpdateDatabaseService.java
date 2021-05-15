@@ -1,5 +1,7 @@
 package cbd52.server.services;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Arrays;
 import java.util.List;
 
@@ -10,6 +12,7 @@ import org.apache.http.impl.client.HttpClients;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import com.mashape.unirest.http.Unirest;
@@ -30,85 +33,98 @@ public class UpdateDatabaseService {
 				.setDefaultRequestConfig(RequestConfig.custom().setCookieSpec(CookieSpecs.STANDARD).build()).build();
 		Unirest.setHttpClient(httpClient);
 	}
+	
+	@Scheduled(cron = "0 0 8 * * ?")
+	public void updateDB() {
+		
+		String yesterday = LocalDate.now(ZoneId.of("Europe/Paris")).minusDays(1).toString();
+		System.out.println("Populating DB for: " + yesterday);
+		this.populateDB(yesterday, yesterday);
+	}
 
-	public void populateDB(String date, String dateTo) {
+	public void populateDB(String dateFrom, String dateTo) {
 		try {
-			String url = "https://api.covid19tracking.narrativa.com/api/" + date + "/country/spain";
+			String url = "https://api.covid19tracking.narrativa.com/api/country/spain?date_from=" + dateFrom + "&date_to=" + dateTo;
+			
 			JSONObject response = Unirest.get(url).asJson().getBody().getObject();
+			JSONObject dates = response.getJSONObject("dates");
+			
+			for (int i = 0; i < dates.keySet().size(); i++) {
+				String date = (String) dates.keySet().toArray()[i];
+				DateData dData = new DateData(date);
 
-			DateData dData = new DateData(date);
+				// Country
+				JSONObject spain = response.getJSONObject("dates").getJSONObject(date).getJSONObject("countries").getJSONObject("Spain");
+				dData.setConfirmed(spain.getInt("today_confirmed"));
+				dData.setNewConfirmed(spain.getInt("today_new_confirmed"));
+				dData.setRecovered(spain.getInt("today_recovered"));
+				dData.setNewRecovered(spain.getInt("today_new_recovered"));
+				dData.setHospitalised(spain.getInt("today_total_hospitalised_patients"));
+				dData.setNewHospitalised(spain.getInt("today_new_total_hospitalised_patients"));
+				dData.setIcu(spain.getInt("today_intensive_care"));
+				dData.setNewIcu(spain.getInt("today_new_intensive_care"));
+				dData.setDeaths(spain.getInt("today_deaths"));
+				dData.setNewDeaths(spain.getInt("today_new_deaths"));
+				// Autonomies
+				JSONArray autonomies = spain.getJSONArray("regions");
+				for (int j = 0; j < autonomies.length(); j++) {
+					JSONObject autonomyJson = autonomies.getJSONObject(j);
+					Autonomy autonomy = new Autonomy(autonomyJson.getString("name"));
 
-			// Country
-			JSONObject spain = response.getJSONObject("dates").getJSONObject(date).getJSONObject("countries").getJSONObject("Spain");
-			dData.setConfirmed(spain.getInt("today_confirmed"));
-			dData.setNewConfirmed(spain.getInt("today_new_confirmed"));
-			dData.setRecovered(spain.getInt("today_recovered"));
-			dData.setNewRecovered(spain.getInt("today_new_recovered"));
-			dData.setHospitalised(spain.getInt("today_total_hospitalised_patients"));
-			dData.setNewHospitalised(spain.getInt("today_new_total_hospitalised_patients"));
-			dData.setIcu(spain.getInt("today_intensive_care"));
-			dData.setNewIcu(spain.getInt("today_new_intensive_care"));
-			dData.setDeaths(spain.getInt("today_deaths"));
-			dData.setNewDeaths(spain.getInt("today_new_deaths"));
-			// Autonomies
-			JSONArray autonomies = spain.getJSONArray("regions");
-			for (int i = 0; i < autonomies.length(); i++) {
-				JSONObject autonomyJson = autonomies.getJSONObject(i);
-				Autonomy autonomy = new Autonomy(autonomyJson.getString("name"));
+					autonomy.setConfirmed(getIntFromJson(autonomyJson, "today_confirmed"));
+					autonomy.setNewConfirmed(getIntFromJson(autonomyJson, "today_new_confirmed"));
+					autonomy.setRecovered(getIntFromJson(autonomyJson, "today_recovered"));
+					autonomy.setNewRecovered(getIntFromJson(autonomyJson, "today_new_recovered"));
 
-				autonomy.setConfirmed(getIntFromJson(autonomyJson, "today_confirmed"));
-				autonomy.setNewConfirmed(getIntFromJson(autonomyJson, "today_new_confirmed"));
-				autonomy.setRecovered(getIntFromJson(autonomyJson, "today_recovered"));
-				autonomy.setNewRecovered(getIntFromJson(autonomyJson, "today_new_recovered"));
+					autonomy.setHospitalised(getIntFromJson(autonomyJson, "today_total_hospitalised_patients"));
+					autonomy.setNewHospitalised(getIntFromJson(autonomyJson, "today_new_total_hospitalised_patients"));
+					autonomy.setIcu(getIntFromJson(autonomyJson, "today_intensive_care"));
+					autonomy.setNewIcu(getIntFromJson(autonomyJson, "today_new_intensive_care"));
+					autonomy.setDeaths(getIntFromJson(autonomyJson, "today_deaths"));
+					autonomy.setNewDeaths(getIntFromJson(autonomyJson, "today_new_deaths"));
 
-				autonomy.setHospitalised(getIntFromJson(autonomyJson, "today_total_hospitalised_patients"));
-				autonomy.setNewHospitalised(getIntFromJson(autonomyJson, "today_new_total_hospitalised_patients"));
-				autonomy.setIcu(getIntFromJson(autonomyJson, "today_intensive_care"));
-				autonomy.setNewIcu(getIntFromJson(autonomyJson, "today_new_intensive_care"));
-				autonomy.setDeaths(getIntFromJson(autonomyJson, "today_deaths"));
-				autonomy.setNewDeaths(getIntFromJson(autonomyJson, "today_new_deaths"));
+					dData.addAutonomy(autonomy);
 
-				dData.addAutonomy(autonomy);
-
-				// Provinces
-				JSONArray provinces = autonomyJson.getJSONArray("sub_regions");
-				// Like Madrid
-				if (provinces.length() == 0) {
-					Province province = new Province(autonomy.getName());
-					province.setConfirmed(autonomy.getConfirmed());
-					province.setNewConfirmed(autonomy.getNewConfirmed());
-					province.setRecovered(autonomy.getRecovered());
-					province.setNewRecovered(autonomy.getNewRecovered());
-					province.setHospitalised(autonomy.getHospitalised());
-					province.setNewHospitalised(autonomy.getNewHospitalised());
-					province.setIcu(autonomy.getIcu());
-					province.setNewIcu(autonomy.getNewIcu());
-					province.setDeaths(autonomy.getDeaths());
-					province.setNewDeaths(autonomy.getNewDeaths());
-					autonomy.addProvince(province);
-				} else {
-					for (int j = 0; j < provinces.length(); j++) {
-						JSONObject provinceJson = provinces.getJSONObject(j);
-						Province province = new Province(provinceJson.getString("name"));
-
-						province.setConfirmed(getIntFromJson(provinceJson, "today_confirmed"));
-						province.setNewConfirmed(getIntFromJson(provinceJson, "today_new_confirmed"));
-						province.setRecovered(getIntFromJson(provinceJson, "today_recovered"));
-						province.setNewRecovered(getIntFromJson(provinceJson, "today_new_recovered"));
-						province.setHospitalised(getIntFromJson(provinceJson, "today_total_hospitalised_patients"));
-						province.setNewHospitalised(getIntFromJson(provinceJson, "today_new_total_hospitalised_patients"));
-						province.setIcu(getIntFromJson(provinceJson, "today_intensive_care"));
-						province.setNewIcu(getIntFromJson(provinceJson, "today_new_intensive_care"));
-						province.setDeaths(getIntFromJson(provinceJson, "today_deaths"));
-						province.setNewDeaths(getIntFromJson(provinceJson, "today_new_deaths"));
-
+					// Provinces
+					JSONArray provinces = autonomyJson.getJSONArray("sub_regions");
+					// Like Madrid
+					if (provinces.length() == 0) {
+						Province province = new Province(autonomy.getName());
+						province.setConfirmed(autonomy.getConfirmed());
+						province.setNewConfirmed(autonomy.getNewConfirmed());
+						province.setRecovered(autonomy.getRecovered());
+						province.setNewRecovered(autonomy.getNewRecovered());
+						province.setHospitalised(autonomy.getHospitalised());
+						province.setNewHospitalised(autonomy.getNewHospitalised());
+						province.setIcu(autonomy.getIcu());
+						province.setNewIcu(autonomy.getNewIcu());
+						province.setDeaths(autonomy.getDeaths());
+						province.setNewDeaths(autonomy.getNewDeaths());
 						autonomy.addProvince(province);
+					} else {
+						for (int k = 0; k < provinces.length(); k++) {
+							JSONObject provinceJson = provinces.getJSONObject(k);
+							Province province = new Province(provinceJson.getString("name"));
+
+							province.setConfirmed(getIntFromJson(provinceJson, "today_confirmed"));
+							province.setNewConfirmed(getIntFromJson(provinceJson, "today_new_confirmed"));
+							province.setRecovered(getIntFromJson(provinceJson, "today_recovered"));
+							province.setNewRecovered(getIntFromJson(provinceJson, "today_new_recovered"));
+							province.setHospitalised(getIntFromJson(provinceJson, "today_total_hospitalised_patients"));
+							province.setNewHospitalised(getIntFromJson(provinceJson, "today_new_total_hospitalised_patients"));
+							province.setIcu(getIntFromJson(provinceJson, "today_intensive_care"));
+							province.setNewIcu(getIntFromJson(provinceJson, "today_new_intensive_care"));
+							province.setDeaths(getIntFromJson(provinceJson, "today_deaths"));
+							province.setNewDeaths(getIntFromJson(provinceJson, "today_new_deaths"));
+
+							autonomy.addProvince(province);
+						}
 					}
 				}
+				this.organiceProvinces(dData.getAutonomies());
+				dData = this.dateDataRepository.save(dData);
 			}
-			this.organiceProvinces(dData.getAutonomies());
-			dData = this.dateDataRepository.save(dData);
-
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
