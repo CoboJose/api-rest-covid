@@ -1,0 +1,26 @@
+.autonomy-container{
+    background-color: white;
+    flex: 1;
+}
+
+.autonomy-title{
+    font-size: 24px !important;
+    font-weight: 600 !important;
+    padding: 1rem;
+    color: rgb(0, 0, 0) !important;
+}
+
+.table-autonomy{
+    color: #6a5d5d;
+}
+.table-autonomy tr{
+    display:flex;
+    justify-content: space-between;
+}
+
+.table-autonomy td {
+    padding: 0.5rem;
+}
+.table-autonomy tr:nth-of-type(odd){
+    background-color: #f3f2f8;
+}

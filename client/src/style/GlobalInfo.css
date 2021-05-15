@@ -1,0 +1,21 @@
+.global-info-box{
+    width: 200px;
+}
+
+.cases{
+    border-top: 10px solid #af1414;
+}
+
+.recovered{
+    border-top: 10px solid #0a8306;
+}
+
+.deaths{
+    border-top: 10px solid #000000;
+}
+@media (max-width: 690px){
+    .global-info-box{
+        width: 100%;
+        margin-top: 20px;
+    }
+  }

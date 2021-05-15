@@ -1,0 +1,21 @@
+.map{
+    height: 500px;
+    background-color: white;
+    padding: 1rem;
+    border-radius: 20px;
+    box-shadow: 0 0 8px -4px rgba(0, 0, 0, 0.5);
+}
+
+.map .svg-map {
+    height: 100%;
+}
+
+#divider {
+    fill: #000;
+}
+#divider:hover {
+    cursor: default;
+}
+button:hover{
+    cursor: pointer;
+}
