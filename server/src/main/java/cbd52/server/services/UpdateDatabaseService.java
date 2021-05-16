@@ -1,7 +1,5 @@
 package cbd52.server.services;
 
-import java.time.LocalDate;
-import java.time.ZoneId;
 import java.util.Arrays;
 import java.util.List;
 
@@ -12,7 +10,6 @@ import org.apache.http.impl.client.HttpClients;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import com.mashape.unirest.http.Unirest;
@@ -21,6 +18,7 @@ import cbd52.server.models.Autonomy;
 import cbd52.server.models.DateData;
 import cbd52.server.models.Province;
 import cbd52.server.repositories.DateDataRepository;
+import cbd52.server.utils.DateUtil;
 
 @Service
 public class UpdateDatabaseService {
@@ -34,12 +32,14 @@ public class UpdateDatabaseService {
 		Unirest.setHttpClient(httpClient);
 	}
 	
-	@Scheduled(cron = "0 0 8 * * ?")
+	
 	public void updateDB() {
+		String lastDayInDB = dateDataRepository.findLastDay();
+		String yesterday = new DateUtil().getYesterdaysStringDate();
 		
-		String yesterday = LocalDate.now(ZoneId.of("Europe/Paris")).minusDays(1).toString();
-		System.out.println("Populating DB for: " + yesterday);
-		this.populateDB(yesterday, yesterday);
+		if(!lastDayInDB.equals(yesterday)) {
+			this.populateDB(lastDayInDB, yesterday);
+		}
 	}
 
 	public void populateDB(String dateFrom, String dateTo) {
@@ -51,10 +51,12 @@ public class UpdateDatabaseService {
 			
 			for (int i = 0; i < dates.keySet().size(); i++) {
 				String date = (String) dates.keySet().toArray()[i];
-				DateData dData = new DateData(date);
-
+				System.out.println("Updating the Database with Data from: " + date);
+				
 				// Country
 				JSONObject spain = response.getJSONObject("dates").getJSONObject(date).getJSONObject("countries").getJSONObject("Spain");
+				DateData dData = new DateData(date);
+				
 				dData.setConfirmed(spain.getInt("today_confirmed"));
 				dData.setNewConfirmed(spain.getInt("today_new_confirmed"));
 				dData.setRecovered(spain.getInt("today_recovered"));
@@ -75,7 +77,6 @@ public class UpdateDatabaseService {
 					autonomy.setNewConfirmed(getIntFromJson(autonomyJson, "today_new_confirmed"));
 					autonomy.setRecovered(getIntFromJson(autonomyJson, "today_recovered"));
 					autonomy.setNewRecovered(getIntFromJson(autonomyJson, "today_new_recovered"));
-
 					autonomy.setHospitalised(getIntFromJson(autonomyJson, "today_total_hospitalised_patients"));
 					autonomy.setNewHospitalised(getIntFromJson(autonomyJson, "today_new_total_hospitalised_patients"));
 					autonomy.setIcu(getIntFromJson(autonomyJson, "today_intensive_care"));
@@ -100,6 +101,7 @@ public class UpdateDatabaseService {
 						province.setNewIcu(autonomy.getNewIcu());
 						province.setDeaths(autonomy.getDeaths());
 						province.setNewDeaths(autonomy.getNewDeaths());
+						
 						autonomy.addProvince(province);
 					} else {
 						for (int k = 0; k < provinces.length(); k++) {
@@ -135,7 +137,7 @@ public class UpdateDatabaseService {
 			switch(autonomy.getName()) {
 				case "Extremadura":
 					Province badajoz = this.getNewProvince(autonomy.getProvinces(), "Badajoz", Arrays.asList("Área de Salud de Badajoz", "Área de Salud de Mérida", "Área de Salud de Don Benito-Villanueva de la Serena", "Área de Salud de Llerena-Zafra"));
-					 Province caceres = this.getNewProvince(autonomy.getProvinces(), "Cáceres", Arrays.asList("Área de Salud de Cáceres", "Área de Salud de Plasencia", "Área de Salud Navalmoral", "Área de Salud de Coria"));
+					Province caceres = this.getNewProvince(autonomy.getProvinces(), "Cáceres", Arrays.asList("Área de Salud de Cáceres", "Área de Salud de Plasencia", "Área de Salud Navalmoral", "Área de Salud de Coria"));
 					autonomy.setProvinces(Arrays.asList(caceres, badajoz));
 					break;
 				case "Canarias":

@@ -1,21 +1,24 @@
 package cbd52.server.models;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.IndexDirection;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import cbd52.server.utils.DateUtil;
 import lombok.Data;
 
 
 @Data
 @Document(collection = "dateData")
 public class DateData {
-
+	
 	@Id
 	String date;
+	@Indexed(direction = IndexDirection.DESCENDING)
 	Integer timestamp;
 	
 	Integer confirmed;
@@ -37,7 +40,7 @@ public class DateData {
 	
 	public DateData(String date) {
 		this.date = date;
-		this.timestamp  = (int) ((Timestamp.valueOf(date + " 00:00:00").getTime())/1000);
+		this.timestamp = new DateUtil().getTimestampFromString(date);
 		this.autonomies = new ArrayList<Autonomy>();
 	}
 	
