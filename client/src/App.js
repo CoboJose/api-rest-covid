@@ -8,6 +8,9 @@ import { Card, CardContent, CircularProgress } from '@material-ui/core'
 import AutonomyStats from './components/AutonomyStats'
 import ProvinceStats from './components/ProvinceStats'
 import { sortData } from './utils';
+import Top3 from './components/Top3'
+import TopDateBy from './components/TopDateBy'
+import DaysWithMoreThan from './components/DaysWithMoreThan'
 
 function App() {
   const [loading, setLoading] = useState(true);
@@ -15,10 +18,12 @@ function App() {
   const [dataDate, setDataDate] = useState();
   const [inputDate, setInputDate] = useState(null);
   const [errorDate, setErrorDate] = useState("");
+  const [totalGlobalInfo, setTotalGlobalInfo] = useState({});
   const [globalInfo, setGlobalInfo] = useState({});
   const [globalInfoByDate, setGlobalInfoByDate] = useState();
   const [tableInfo, setTableInfo] = useState([]);
   const [selectedProvince, setSelectedProvince] = useState("Sevilla");
+  const [topTitle, setTopTitle] = useState("Nuevos confirmados");
 
   useEffect(() => {
     const date = new Date(new Date().getTime() - 86400000).toISOString();
@@ -32,11 +37,9 @@ function App() {
           setDataDate(res.data);
           setGlobalInfo({
             dateUpdate: res.data.date,
-            confirmed: res.data.confirmed,
+            
             newConfirmed: res.data.newConfirmed,
-            recovered: res.data.recovered,
             newRecovered: res.data.newRecovered,
-            deaths: res.data.deaths,
             newDeaths: res.data.newDeaths,
           });
           let autonomiesData = res.data.autonomies.map((autonomy) => ({
@@ -50,6 +53,18 @@ function App() {
         .catch((err) => {
           console.log(err);
         });
+      axios.get("/totalData")
+      .then((res) => {
+        setTotalGlobalInfo({
+          confirmed: res.data.confirmed,
+          recovered: res.data.recovered,
+          deaths: res.data.deaths,
+        });
+      })
+      .catch((err) =>{
+        console.log(err);
+      })
+
     };
     getDataApiToday();
   }, []);
@@ -64,7 +79,7 @@ function App() {
         setInputDate("");
       }, 2000);
     } else if (new Date(e.target.value).getTime() > new Date().getTime()) {
-      setErrorDate("la fecha debe ser menor que la de hoy");
+      setErrorDate("La fecha debe ser menor que la de hoy");
       setTimeout(() => {
         setErrorDate("");
         setInputDate("");
@@ -89,6 +104,7 @@ function App() {
         });
     }
   };
+  console.log(topTitle)
 
   return (
     <div className="app">
@@ -119,19 +135,19 @@ function App() {
               <GlobalInfo
                 title="Casos Coronavirus"
                 cases={globalInfo.newConfirmed}
-                total={globalInfo.confirmed}
+                total={totalGlobalInfo.confirmed}
                 type="cases"
               />
               <GlobalInfo
                 title="Recuperados"
                 cases={globalInfo.newRecovered}
-                total={globalInfo.recovered}
+                total={totalGlobalInfo.recovered}
                 type="recovered"
               />
               <GlobalInfo
                 title="Muertes"
                 cases={globalInfo.newDeaths}
-                total={globalInfo.deaths}
+                total={totalGlobalInfo.deaths}
                 type="deaths"
               />
             </div>
@@ -189,14 +205,18 @@ function App() {
           </>
         )}
       </div>
-      {loading ? (
+    {loading ? (
         <CircularProgress />
-      ) : (
+      ) : ( 
         <Card className="app-right">
           <CardContent>
             <h3>Casos en España por Comunidad</h3>
             <SpainTable info={tableInfo} />
-            <h3>Top 3 provincias</h3>
+            <h3 className="title-top3">Top 3 provincias con nuevos casos</h3>
+            <Top3/>
+            <h3 className="title-top3">Fecha donde hubo más {topTitle}</h3>
+            <TopDateBy topTitle={topTitle} setTopTitle={setTopTitle}/>
+            <DaysWithMoreThan/>
           </CardContent>
         </Card>
       )}
