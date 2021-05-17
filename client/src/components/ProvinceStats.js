@@ -2,20 +2,34 @@ import { Card, CardContent, Typography } from '@material-ui/core'
 import React from 'react'
 import "../style/ProvinceStats.css"
 
-function ProvinceStats({title, cases, recovered, deaths}) {
+function ProvinceStats({dataDate, province}) {
+    
+    const getProvinceData = (data, province) => {
+        let res = null;
+        data.autonomies.map((autonomy) => {
+            autonomy.provinces.map((element) => {
+                if(element.name == province){
+                    res = element
+                }
+            })
+        })
+        return res;
+    }
+    const date = dataDate.date;
+    const provinceData = getProvinceData(dataDate, province);
     return (
         <Card className="province-container">
             <CardContent>
                 <Typography className="province-title">
-                    {title}
+                    {provinceData.name} {date}
                 </Typography>
                 <div className="table-province">
                     <tr>
                         <td>
-                            Casos activos
+                            Nuevos casos
                         </td>
                         <td>
-                            <strong>{cases}</strong>
+                            <strong>{provinceData.newConfirmed == null ? "No data" : provinceData.newConfirmed}</strong>
                         </td>
                     </tr>
                     <tr>
@@ -23,7 +37,7 @@ function ProvinceStats({title, cases, recovered, deaths}) {
                             Recuperados
                         </td>
                         <td>
-                        <strong>{recovered}</strong>
+                        <strong>{provinceData.newRecovered == null ? "No data" : provinceData.newRecovered}</strong>
                         </td>
                     </tr>
                     <tr>
@@ -31,7 +45,7 @@ function ProvinceStats({title, cases, recovered, deaths}) {
                         Muertes
                         </td>
                         <td>
-                        <strong>{deaths}</strong>
+                        <strong>{provinceData.newDeaths == null ? "No data" : provinceData.newDeaths}</strong>
                         </td>
                     </tr>
                 </div>
