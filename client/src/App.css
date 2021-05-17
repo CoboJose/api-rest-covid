@@ -16,7 +16,6 @@ body{
   display:flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
   padding: 20px;
 }
 
@@ -51,6 +50,14 @@ body{
   border-radius: 20px;
   padding:20px;
   outline: none;
+}
+
+.date-update{
+  padding-bottom: 15px ;
+}
+
+.error-date{
+  color: #c52222;
 }
 
 

@@ -24,3 +24,15 @@ export function getLocationName(event) {
 export function getLocationSelected(event) {
 	return event.target.attributes['aria-checked'].value === 'true';
 }
+
+export const sortData = (data) => {
+	let sortedData = [...data];
+	sortedData.sort((a, b) => {
+	  if (a.totalCases > b.totalCases) {
+		return -1;
+	  } else {
+		return 1;
+	  }
+	});
+	return sortedData;
+  };
