@@ -1,0 +1,30 @@
+.topDateBy-container{
+    text-align: center;
+    font-size: 14px;
+    border: 1px solid;
+    border-image: 
+    linear-gradient(
+      to top, 
+      rgb(66, 58, 58), 
+      rgba(0, 0, 0, 0)
+    ) 1;
+    border-radius: 20px;
+    margin-bottom: 10px;
+}
+.topDateBy-container h5{
+    font-size: 35px;
+}
+
+.topDateBy-container strong{
+    font-size: 20px;
+}
+.switch-container{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.switch-container p{
+    font-weight: 600;
+    color: #332e2e;
+}

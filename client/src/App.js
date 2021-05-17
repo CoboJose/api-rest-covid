@@ -8,6 +8,9 @@ import { Card, CardContent, CircularProgress } from '@material-ui/core'
 import AutonomyStats from './components/AutonomyStats'
 import ProvinceStats from './components/ProvinceStats'
 import { sortData } from './utils';
+import Top3 from './components/Top3'
+import TopDateBy from './components/TopDateBy'
+import DaysWithMoreThan from './components/DaysWithMoreThan'
 
 function App() {
   const [loading, setLoading] = useState(true);
@@ -19,6 +22,7 @@ function App() {
   const [globalInfoByDate, setGlobalInfoByDate] = useState();
   const [tableInfo, setTableInfo] = useState([]);
   const [selectedProvince, setSelectedProvince] = useState("Sevilla");
+  const [topTitle, setTopTitle] = useState("Nuevos confirmados");
 
   useEffect(() => {
     const date = new Date(new Date().getTime() - 86400000).toISOString();
@@ -64,7 +68,7 @@ function App() {
         setInputDate("");
       }, 2000);
     } else if (new Date(e.target.value).getTime() > new Date().getTime()) {
-      setErrorDate("la fecha debe ser menor que la de hoy");
+      setErrorDate("La fecha debe ser menor que la de hoy");
       setTimeout(() => {
         setErrorDate("");
         setInputDate("");
@@ -89,6 +93,7 @@ function App() {
         });
     }
   };
+  console.log(topTitle)
 
   return (
     <div className="app">
@@ -189,17 +194,21 @@ function App() {
           </>
         )}
       </div>
-      {loading ? (
+      {/* {loading ? (
         <CircularProgress />
-      ) : (
+      ) : ( */}
         <Card className="app-right">
           <CardContent>
             <h3>Casos en España por Comunidad</h3>
             <SpainTable info={tableInfo} />
-            <h3>Top 3 provincias</h3>
+            <h3 className="title-top3">Top 3 provincias con nuevos casos</h3>
+            <Top3/>
+            <h3 className="title-top3">Top By {topTitle}</h3>
+            <TopDateBy topTitle={topTitle} setTopTitle={setTopTitle}/>
+            <DaysWithMoreThan/>
           </CardContent>
         </Card>
-      )}
+      {/* )} */}
     </div>
   );
 }

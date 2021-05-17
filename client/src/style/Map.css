@@ -13,7 +13,7 @@
 .svg-map {
     width: 100%;
     height: 100vh;
-    stroke: #666;
+    stroke: rgb(31, 75, 33);
     stroke-width: 1;
     stroke-linecap: round;
     stroke-linejoin: round; 
@@ -24,16 +24,16 @@
 }
 
 .color-1{
-    fill: #23f33f
+    fill: #7bed9f
 }
 .color-2{
-    fill: #e9ec32
+    fill: #fad390
 }
 .color-3{
-    fill: #f5a91d
+    fill: #f3a683
 }
 .color-4{
-    fill: #fc1e1e
+    fill: #ff5252
 }
 
 .svg-map__location:focus, .svg-map__location:hover {

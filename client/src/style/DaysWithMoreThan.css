@@ -1,0 +1,26 @@
+.form-container{
+    display: flex;
+    justify-content: space-between;
+}
+
+.MuiFormControl-root{
+    flex-direction: row !important;
+}
+
+.MuiFormControl-root .MuiInputBase-root{
+    margin-left: 5px;
+}
+
+@media (max-width: 530px) {
+    .form-container{
+        flex-direction: column;
+
+    }
+    .MuiFormControl-root{
+        flex-direction: column !important;
+    }
+
+    .MuiFormControl-root .MuiInputBase-root{
+        margin-top: 10px;
+    }
+}
