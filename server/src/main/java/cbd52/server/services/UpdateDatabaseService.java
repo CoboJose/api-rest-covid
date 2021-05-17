@@ -1,6 +1,5 @@
 package cbd52.server.services;
 
-import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -41,7 +40,7 @@ public class UpdateDatabaseService {
 		String lastDayInDB = dateDataRepository.findLastDay();
 		String yesterday = dateUtil.getYesterdaysStringDate();
 		
-		if(!lastDayInDB.equals(yesterday) && (LocalTime.now().getHour() >= 10)) {
+		if(!lastDayInDB.equals(yesterday)) {
 			// Update From last three days to today to update with new data
 			this.populateDB(dateUtil.getBeforeDaysFromStringDate(lastDayInDB, 3), yesterday);
 		}
