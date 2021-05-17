@@ -1,5 +1,7 @@
 package cbd52.server.services;
 
+import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -34,11 +36,14 @@ public class UpdateDatabaseService {
 	
 	
 	public void updateDB() {
-		String lastDayInDB = dateDataRepository.findLastDay();
-		String yesterday = new DateUtil().getYesterdaysStringDate();
+		DateUtil dateUtil = new DateUtil();
 		
-		if(!lastDayInDB.equals(yesterday)) {
-			this.populateDB(lastDayInDB, yesterday);
+		String lastDayInDB = dateDataRepository.findLastDay();
+		String yesterday = dateUtil.getYesterdaysStringDate();
+		
+		if(!lastDayInDB.equals(yesterday) && (LocalTime.now().getHour() >= 10)) {
+			// Update From last three days to today to update with new data
+			this.populateDB(dateUtil.getBeforeDaysFromStringDate(lastDayInDB, 3), yesterday);
 		}
 	}
 
@@ -48,6 +53,8 @@ public class UpdateDatabaseService {
 			
 			JSONObject response = Unirest.get(url).asJson().getBody().getObject();
 			JSONObject dates = response.getJSONObject("dates");
+			
+			List<DateData> dDatas = new ArrayList<DateData>();
 			
 			for (int i = 0; i < dates.keySet().size(); i++) {
 				String date = (String) dates.keySet().toArray()[i];
@@ -124,8 +131,9 @@ public class UpdateDatabaseService {
 					}
 				}
 				this.organiceProvinces(dData.getAutonomies());
-				dData = this.dateDataRepository.save(dData);
+				dDatas.add(dData);
 			}
+			dateDataRepository.saveAll(dDatas);
 			
 		} catch (Exception e) {
 			e.printStackTrace();
