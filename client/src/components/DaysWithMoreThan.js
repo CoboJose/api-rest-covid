@@ -29,7 +29,6 @@ function DaysWithMoreThan() {
     }, [])
 
     const handleChange = (e) => {
-        console.log(e)
         setInput({
             ...input,
             [e.target.name]: e.target.value

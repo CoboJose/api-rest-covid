@@ -21,7 +21,6 @@ function TopDateBy({topTitle, setTopTitle}) {
 
             axios.get("/topDateBy?by="+title(topTitle))
             .then((res) => {
-                console.log(res.data)
                 setTopDateBy(res.data)
                 setLoading(false)
             })

@@ -16,7 +16,6 @@ function AutonomyStats({dataDate, province}) {
     }
     const date = dataDate.date;
     const autonomyData = getAutonomyData(dataDate, province);
-    console.log(autonomyData)
     return (
         <Card className="autonomy-container">
             <CardContent>

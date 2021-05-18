@@ -78,7 +78,7 @@ function App() {
         setErrorDate("");
         setInputDate("");
       }, 2000);
-    } else if (new Date(e.target.value).getTime() > new Date().getTime()) {
+    } else if (Math.floor(new Date(e.target.value).getTime() /1000 /60 /60 /24) >= Math.floor(new Date().getTime() /1000 /60 /60 /24)) {
       setErrorDate("La fecha debe ser menor que la de hoy");
       setTimeout(() => {
         setErrorDate("");
@@ -104,7 +104,6 @@ function App() {
         });
     }
   };
-  console.log(topTitle)
 
   return (
     <div className="app">
