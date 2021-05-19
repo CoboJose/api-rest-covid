@@ -2,11 +2,10 @@
 Covid Tracking App made with Java(Springboot), MongoDB and React
 
 ## How to run
-### Dependencies
+### Requirements
 - Java: https://adoptopenjdk.net/?variant=openjdk11&jvmVariant=hotspot
 - Maven: https://maven.apache.org/download.cgi
 - Lombok: https://projectlombok.org/ (Select your IDE)
-- MongoDB: https://www.mongodb.com/try/download/community
 - Node: https://nodejs.org/en/
 
 ### Server
