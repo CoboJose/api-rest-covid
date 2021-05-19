@@ -9,4 +9,5 @@
 
 ### `mvn spring-boot:run`
 Start the application at http://localhost:8080.
+
 It will reload when changes are made.
