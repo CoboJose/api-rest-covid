@@ -17,11 +17,11 @@ function DaysWithMoreThan() {
             .then((res)=>{
                 setData(res.data);
                 setResult({
-                    type: input.type,
-                    number: input.number
+                    type: "Confirmed",
+                    number: 500
                 });
             })
-            .then(err => {
+            .catch(err => {
                 console.log(err)
             })
         }

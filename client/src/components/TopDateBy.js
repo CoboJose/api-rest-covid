@@ -12,13 +12,12 @@ function TopDateBy({topTitle, setTopTitle}) {
                 switch(title){
                     case "Nuevos confirmados":
                         return "Confirmed";
-                    case "Nuevas fallecimientos":
+                    case "Nuevos fallecimientos":
                         return"Deaths";
                     default:
                         return"Confirmed";
                 }
             }
-
             axios.get("/topDateBy?by="+title(topTitle))
             .then((res) => {
                 setTopDateBy(res.data)
@@ -47,7 +46,7 @@ function TopDateBy({topTitle, setTopTitle}) {
                <>
                     <p>La fecha donde hubo mayor número de <strong>{topTitle}</strong> fue:</p>
                     <h5>{topDateBy.date}</h5>
-                    <p>Con un total de {topTitle == "Nuevos confirmados" ? <strong>{topDateBy.newConfirmed}</strong> : <strong>{topDateBy.newDeaths}</strong>} personas</p>
+                    <p>Con un total de {topTitle === "Nuevos confirmados" ? <strong>{topDateBy.newConfirmed}</strong> : <strong>{topDateBy.newDeaths}</strong>} personas</p>
                 </>
            )}
             <div className="switch-container">

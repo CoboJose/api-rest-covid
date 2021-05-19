@@ -7,7 +7,7 @@ function AutonomyStats({dataDate, province}) {
         let res = null;
         data.autonomies.map((autonomy) => {
             autonomy.provinces.map((element) => {
-                if(element.name == province){
+                if(element.name === province){
                     res = autonomy
                 }
             })

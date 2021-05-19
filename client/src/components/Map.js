@@ -35,7 +35,7 @@ function Map({totalData, setSelectedProvince}) {
         }
         getProvincesCases();
 
-    },[totalData])
+    },[totalDataMap])
     
     
     const handleLocationMouseOver = (event) => {
@@ -49,10 +49,10 @@ function Map({totalData, setSelectedProvince}) {
 	}
 
     const generateColor = (location, index) =>{
-        const provinceCases = provincesCases.find(e => e.name == location.name)
+        const provinceCases = provincesCases.find(e => e.name === location.name)
         let colorDivision = null;
 
-        if(provinceCases != undefined ){
+        if(provinceCases !== undefined ){
             if(provinceCases.cases <= maxCase/6){
                 colorDivision=1;
             }else if(provinceCases.cases <= maxCase/5){
